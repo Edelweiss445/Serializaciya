@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.*;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -14,17 +15,15 @@ public class Main {
                 new Product("Bread", 35.75)
         };
         double[] prices = {55.50, 99.35, 85.50, 35.75};
-        Basket basket;
-        File textFile = new File("basket.txt");
-        if (textFile.exists()) {
-            try {
-                basket = Basket.loadFromTxtFile(textFile, products, prices);
-            } catch (IOException e) {
-                System.out.println("Error loading basket from file. Starting with empty cart.");
-                basket = new Basket(products, prices);
-            }
-        } else {
-            basket = new Basket(products, prices);
+
+        Basket basket = new Basket(products, prices);
+        File file = new File("basket.bin");
+
+        Basket.saveBin(file);
+
+        Basket cart = Basket.loadFromBinFile(file);
+        if (cart != null) {
+            System.out.println(file);
         }
 
         Scanner scanner = new Scanner(System.in);
@@ -51,7 +50,7 @@ public class Main {
                     continue;
                 }
                 basket.addToCart(productNum, quantity);
-                basket.saveTxt(textFile);
+                basket.saveTxt(file);
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input, try again.");
             } catch (IOException e) {

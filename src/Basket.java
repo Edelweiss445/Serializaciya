@@ -1,12 +1,9 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class Basket {
+public class Basket implements Serializable {
     private Map<Integer, Integer> cart;
     private Product[] products;
 
@@ -66,5 +63,29 @@ public class Basket {
 
     public Map<Integer, Integer> getCart() {
         return cart;
+    }
+
+    // Метод для сохранения корзины в бинарный файл
+    public static void saveBin(File file) {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file);
+             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
+            objectOutputStream.writeObject(file);
+            System.out.println("Корзина успешно сохранена в файл " + file.getAbsolutePath());
+        } catch (IOException e) {
+            System.out.println("Ошибка при сохранении корзины: " + e.getMessage());
+        }
+    }
+
+    // Метод для загрузки корзины из бинарного файла
+    public static Basket loadFromBinFile(File file) {
+        try (FileInputStream fileInputStream = new FileInputStream(file);
+             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+            Basket shoppingCart = (Basket) objectInputStream.readObject();
+            System.out.println("Корзина успешно загружена из файла " + file.getAbsolutePath());
+            return shoppingCart;
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Ошибка при загрузке корзины: " + e.getMessage());
+            return null;
+        }
     }
 }
